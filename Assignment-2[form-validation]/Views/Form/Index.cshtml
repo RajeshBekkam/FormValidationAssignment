@@ -1,0 +1,85 @@
+﻿@model FormModel
+@{
+    var CountryCodes = ViewData["CountryCodes"] as List<string>;
+}
+
+
+<div class="container">
+    <div class="form-container shadow">
+        <h6 class="text-start pb-3">Edit Address</h6>
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col">
+                    <label asp-for="Name" class="form-label">Name*</label>
+                    <input asp-for="Name" type="text" class="form-control" id="name" placeholder="John Doe" required>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col">
+                    <label asp-for="Email" class="form-label">Email*</label>
+                    <input asp-for="Email" class="form-control" id="email" placeholder="JohnDoe@gmail.com" required>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="BillingAddress" class="form-label">Billing Address*</label>
+                <textarea asp-for="BillingAddress" class="form-control" id="billingAddress" rows="3" placeholder="Address" required></textarea>
+                <span asp-validation-for="BillingAddress" class="text-danger"></span>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label asp-for="Contact" class="form-label">Contact*</label>
+                    <div class="input-group">
+                        <select asp-for="CountryCode" class="form-select flex-grow-0 w-auto" id="CountryCode" required>
+                            <option selected>EN</option>
+                            @if (CountryCodes != null)
+                            {
+                                @foreach (var code in CountryCodes)
+                                {
+                                    <option>@code</option> 
+                                }
+                            }
+                        </select>
+                        <input asp-for="Contact" type="text" class="form-control" id="contact" placeholder="+44 0000 000000" required>
+                        <span asp-validation-for="Contact" class="text-danger"></span>
+                    </div>
+                </div>
+
+
+                <div class="col">
+                    <label asp-for="Service" class="form-label">Services</label>
+                    <select asp-for="Service" class="form-select" id="services">
+                        <option selected>Select</option>
+                        <option value="1">Service 1</option>
+                        <option value="2">Service 2</option>
+                        <option value="3">Service 3</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label asp-for="ZipCode" class="form-label">Zip Code*</label>
+                    <input asp-for="ZipCode" type="text" class="form-control" id="zipCode" placeholder="000000" required>
+                    <span asp-validation-for="ZipCode" class="text-danger"></span>
+                </div>
+                <div class="col">
+                    <label asp-for="VATNumber" class="form-label">VAT Number*</label>
+                    <input asp-for="VATNumber" type="text" class="form-control" id="vatNumber" placeholder="000000" required>
+                    <span asp-validation-for="VATNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <button type="button" class="btn btn-outline-secondary w-100">Cancel</button>
+                </div>
+                <div class="col-6">
+                    <button type="submit" class="btn btn-custom w-100">Submit</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
