@@ -1,76 +1,86 @@
 ﻿@model FormModel
 @{
     var CountryCodes = ViewData["CountryCodes"] as List<string>;
+    var Services = ViewData["Services"] as List<string>;
 }
-
 
 <div class="container">
     <div class="form-container shadow">
         <h6 class="text-start pb-3">Edit Address</h6>
-        <form method="post">
+
+        <form id="addressForm" method="post" novalidate>
+            <!-- Name Field -->
             <div class="row mb-3">
                 <div class="col">
                     <label asp-for="Name" class="form-label">Name*</label>
-                    <input asp-for="Name" type="text" class="form-control" id="name" placeholder="John Doe" required>
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <input asp-for="Name" type="text" class="form-control" id="name" placeholder="John Doe">
+                    <span id="nameError" class="text-danger"></span>
                 </div>
                 <div class="col">
                     <label asp-for="Email" class="form-label">Email*</label>
-                    <input asp-for="Email" class="form-control" id="email" placeholder="JohnDoe@gmail.com" required>
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <input asp-for="Email" class="form-control" id="email" placeholder="JohnDoe@gmail.com">
+                    <span id="emailError" class="text-danger"></span>
                 </div>
             </div>
 
+            <!-- Billing Address Field -->
             <div class="mb-3">
                 <label asp-for="BillingAddress" class="form-label">Billing Address*</label>
-                <textarea asp-for="BillingAddress" class="form-control" id="billingAddress" rows="3" placeholder="Address" required></textarea>
-                <span asp-validation-for="BillingAddress" class="text-danger"></span>
+                <textarea asp-for="BillingAddress" class="form-control" id="billingAddress" rows="3" placeholder="Address"></textarea>
+                <span id="billingAddressError" class="text-danger"></span>
             </div>
 
+            <!-- Contact Field -->
             <div class="row mb-3">
                 <div class="col">
                     <label asp-for="Contact" class="form-label">Contact*</label>
                     <div class="input-group">
-                        <select asp-for="CountryCode" class="form-select flex-grow-0 w-auto" id="CountryCode" required>
+                        <select asp-for="CountryCode" class="form-select flex-grow-0 w-auto" id="CountryCode">
                             <option selected>EN</option>
                             @if (CountryCodes != null)
                             {
                                 @foreach (var code in CountryCodes)
                                 {
-                                    <option>@code</option> 
+                                    <option>@code</option>
                                 }
                             }
                         </select>
-                        <input asp-for="Contact" type="text" class="form-control" id="contact" placeholder="+44 0000 000000" required>
-                        <span asp-validation-for="Contact" class="text-danger"></span>
+                        <input asp-for="Contact" type="text" class="form-control" id="contact" placeholder="+44 0000 000000">
+                        <span id="contactError" class="text-danger"></span>
                     </div>
                 </div>
 
-
+                <!-- Service Field -->
                 <div class="col">
                     <label asp-for="Service" class="form-label">Services</label>
                     <select asp-for="Service" class="form-select" id="services">
                         <option selected>Select</option>
-                        <option value="1">Service 1</option>
-                        <option value="2">Service 2</option>
-                        <option value="3">Service 3</option>
+                        @if (Services != null)
+                        {
+                            @foreach (var service in Services)
+                            {
+                                <option>@service</option>
+                            }
+                        }
                     </select>
                 </div>
             </div>
 
+            <!-- Zip Code and VAT Number -->
             <div class="row mb-3">
                 <div class="col">
                     <label asp-for="ZipCode" class="form-label">Zip Code*</label>
-                    <input asp-for="ZipCode" type="text" class="form-control" id="zipCode" placeholder="000000" required>
-                    <span asp-validation-for="ZipCode" class="text-danger"></span>
+                    <input asp-for="ZipCode" type="text" class="form-control" id="zipCode" placeholder="000000">
+                    <span id="zipCodeError" class="text-danger"></span>
                 </div>
                 <div class="col">
                     <label asp-for="VATNumber" class="form-label">VAT Number*</label>
-                    <input asp-for="VATNumber" type="text" class="form-control" id="vatNumber" placeholder="000000" required>
-                    <span asp-validation-for="VATNumber" class="text-danger"></span>
+                    <input asp-for="VATNumber" type="text" class="form-control" id="vatNumber" placeholder="000000">
+                    <span id="vatNumberError" class="text-danger"></span>
                 </div>
             </div>
 
+            <!-- Buttons -->
             <div class="row mb-3">
                 <div class="col-6">
                     <button type="button" class="btn btn-outline-secondary w-100">Cancel</button>
@@ -83,3 +93,91 @@
         </form>
     </div>
 </div>
+
+<script>
+    const form = document.getElementById('addressForm');
+
+    form.addEventListener('submit', function (event) {
+
+        // Prevent the form from submitting
+        event.preventDefault();    
+
+        // Clear any existing errors
+        clearErrors();
+
+        // validation flag
+        let isValid = true;
+
+        // Name Validation
+        const name = document.getElementById('name').value;
+        if (name === '') {
+            isValid = false;
+            document.getElementById('nameError').innerText = 'Name is required.';
+        }
+
+        // Validate Email
+        const email = document.getElementById('email').value;
+        if (email === '') {
+            isValid = false;
+            document.getElementById('emailError').innerText = 'Email is required.';
+        } else if (!validateEmail(email)) {
+            isValid = false;
+            document.getElementById('emailError').innerText = 'Please enter a valid email address.';
+        }
+
+        // Validate Billing Address
+        const billingAddress = document.getElementById('billingAddress').value;
+        if (billingAddress === '') {
+            isValid = false;
+            document.getElementById('billingAddressError').innerText = 'Billing Address is required.';
+        }
+
+        // Validate Contact
+        const contact = document.getElementById('contact').value;
+        if (contact === '') {
+            isValid = false;
+            document.getElementById('contactError').innerText = 'Contact is required.';
+        } else if (!/^\+?\d{10,15}$/.test(contact)) {
+            isValid = false;
+            document.getElementById('contactError').innerText = 'Please enter a valid contact number.';
+        }
+
+        // Validate Zip Code
+        const zipCode = document.getElementById('zipCode').value;
+        if (zipCode === '') {
+            isValid = false;
+            document.getElementById('zipCodeError').innerText = 'Zip Code is required.';
+        } else if (!/^\d{6}$/.test(zipCode)) {
+            isValid = false;
+            document.getElementById('zipCodeError').innerText = 'Please enter a valid Zip Code (6 digits).';
+        }
+
+        // Validate VAT Number
+        const vatNumber = document.getElementById('vatNumber').value;
+        if (vatNumber === '') {
+            isValid = false;
+            document.getElementById('vatNumberError').innerText = 'VAT Number is required.';
+        }
+
+        // If the form is valid, submit it
+        if (isValid) {
+            form.submit();  // Submit the form
+        }
+    });
+
+    // Helper function to validate email format
+    function validateEmail(email) {
+        
+        return true;
+    }
+
+    // Clear any existing validation error messages
+    function clearErrors() {
+        document.getElementById('nameError').innerText = '';
+        document.getElementById('emailError').innerText = '';
+        document.getElementById('billingAddressError').innerText = '';
+        document.getElementById('contactError').innerText = '';
+        document.getElementById('zipCodeError').innerText = '';
+        document.getElementById('vatNumberError').innerText = '';
+    }
+</script>

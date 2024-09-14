@@ -15,6 +15,8 @@ namespace Assignment_2_form_validation_.Controllers
 
         public IActionResult Index()
         {
+            ViewData["CountryCodes"] = new List<string>() { "IN","US" };
+            ViewData["Services"] = new List<string>() { "Service1", "Service2", "Service3" };
             return View();
         }
 
